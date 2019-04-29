@@ -2,4 +2,4 @@
 
 ## Replica SDK
 
-![ReplicaViewer](./ReplicaViewer.png)
+![ReplicaViewer](./assets/ReplicaViewer.png)
