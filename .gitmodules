@@ -1,5 +1,5 @@
 [submodule "3rdparty/eigen-git-mirror"]
-	path = 3rdparty/eigen-git-mirror
+	path = 3rdparty/eigen
 	url = git@github.com:eigenteam/eigen-git-mirror.git
 [submodule "3rdparty/Pangolin"]
 	path = 3rdparty/Pangolin
