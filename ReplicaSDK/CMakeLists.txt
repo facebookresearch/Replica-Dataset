@@ -45,7 +45,7 @@ target_link_libraries(ReplicaViewer
                       stdc++fs
 )
 
-add_executable(ReplicaRenderer src/render.cpp)
+add_executable(ReplicaRenderer src/render.cpp src/MirrorSurface.cpp)
 
 target_link_libraries(ReplicaRenderer
                       ${Pangolin_LIBRARIES}

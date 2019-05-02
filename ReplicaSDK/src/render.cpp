@@ -1,14 +1,21 @@
 #include <EGL.h>
 #include <PTexLib.h>
 
+#include "MirrorRenderer.h"
+
 int main(int argc, char* argv[]) {
-  ASSERT(argc == 3, "Usage: ./ReplicaRenderer mesh.ply /path/to/atlases");
+  ASSERT(argc == 3 || argc == 4, "Usage: ./ReplicaRenderer mesh.ply /path/to/atlases [mirrorFile]");
 
   const std::string meshFile(argv[1]);
   const std::string atlasFolder(argv[2]);
-
   ASSERT(pangolin::FileExists(meshFile));
   ASSERT(pangolin::FileExists(atlasFolder));
+
+  std::string surfaceFile;
+  if (argc == 4) {
+    surfaceFile = std::string(argv[3]);
+    ASSERT(pangolin::FileExists(surfaceFile));
+  }
 
   const int width = 1280;
   const int height = 960;
@@ -17,6 +24,9 @@ int main(int argc, char* argv[]) {
   EGLCtx egl;
 
   egl.PrintInformation();
+
+  const GLenum frontFace = GL_CW;
+  glFrontFace(frontFace);
 
   // Setup a framebuffer
   pangolin::GlTexture render(width, height);
@@ -44,6 +54,23 @@ int main(int argc, char* argv[]) {
 
   T_new_old.topRightCorner(3, 1) = Eigen::Vector3d(-0.005, 0, 0);
 
+  // load mirrors
+  std::vector<MirrorSurface> mirrors;
+  if (surfaceFile.length()) {
+    std::ifstream file(surfaceFile);
+    picojson::value json;
+    picojson::parse(json, file);
+
+    for (size_t i = 0; i < json.size(); i++) {
+      mirrors.emplace_back(json[i]);
+    }
+    std::cout << "Loaded " << mirrors.size() << " mirrors" << std::endl;
+  }
+
+  const std::string shadir = STR(SHADER_DIR);
+  MirrorRenderer mirrorRenderer(mirrors, width, height, shadir);
+
+  // load mesh and textures
   PTexMesh ptexMesh(meshFile, atlasFolder);
 
   pangolin::ManagedImage<Eigen::Matrix<uint8_t, 3, 1>> image(width, height);
@@ -63,7 +90,21 @@ int main(int argc, char* argv[]) {
 
     ptexMesh.Render(s_cam);
 
-    glPopAttrib();
+    glPushAttrib(GL_ENABLE_BIT);
+    glDisable(GL_CULL_FACE);
+
+    for (size_t i = 0; i < mirrors.size(); i++) {
+      MirrorSurface& mirror = mirrors[i];
+      // capture reflections
+      mirrorRenderer.CaptureReflection(mirror, ptexMesh, s_cam, frontFace);
+
+      // render mirror
+      mirrorRenderer.Render(mirror, mirrorRenderer.GetMaskTexture(i), s_cam, 0.0025f);
+    }
+
+    glPopAttrib(); //GL_ENABLE_BIT
+    glPopAttrib(); //GL_VIEWPORT_BIT
+
     frameBuffer.Unbind();
 
     // Download and save
