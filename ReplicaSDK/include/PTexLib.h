@@ -26,11 +26,18 @@ class PTexMesh {
       const pangolin::OpenGlRenderState& cam,
       const Eigen::Vector4f& clipPlane = Eigen::Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
 
+  void RenderWireframe(
+      const pangolin::OpenGlRenderState& cam,
+      const Eigen::Vector4f& clipPlane = Eigen::Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+
   float Exposure() const;
   void SetExposure(const float& val);
 
   float Gamma() const;
   void SetGamma(const float& val);
+
+  float Saturation() const;
+  void SetSaturation(const float& val);
 
   size_t GetNumSubMeshes() {
     return meshes.size();
@@ -57,6 +64,7 @@ class PTexMesh {
 
   float exposure = 1.0f;
   float gamma = 1.0f;
+  float saturation = 1.0f;
   bool isHdr = false;
 
   static constexpr int ROTATION_SHIFT = 30;

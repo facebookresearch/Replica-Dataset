@@ -85,9 +85,12 @@ int main(int argc, char* argv[]) {
   // load mesh and textures
   PTexMesh ptexMesh(meshFile, atlasFolder);
 
-  pangolin::Var<float> exposure("ui.Exposure", ptexMesh.Exposure(), 0.0f, 0.1f);
+  pangolin::Var<float> exposure("ui.Exposure", ptexMesh.Exposure(), 0.0f, 0.5f);
+  pangolin::Var<float> gamma("ui.Gamma", ptexMesh.Gamma(), 1.0f, 3.0f);
+  pangolin::Var<float> saturation("ui.Saturation", ptexMesh.Saturation(), 0.0f, 2.0f);
+
   pangolin::Var<bool> wireframe("ui.Wireframe", false, true);
-  pangolin::Var<bool> drawBackfaces("ui.Draw_backfaces", true, true);
+  pangolin::Var<bool> drawBackfaces("ui.Draw_backfaces", false, true);
   pangolin::Var<bool> drawMirrors("ui.Draw_mirrors", true, true);
 
   while (!pangolin::ShouldQuit()) {
@@ -97,10 +100,17 @@ int main(int argc, char* argv[]) {
       ptexMesh.SetExposure(exposure);
     }
 
+    if (gamma.GuiChanged()) {
+      ptexMesh.SetGamma(gamma);
+    }
+
+    if (saturation.GuiChanged()) {
+      ptexMesh.SetSaturation(saturation);
+    }
+
     if (meshView.IsShown()) {
       meshView.Activate(s_cam);
 
-      glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
       if (drawBackfaces) {
         glDisable(GL_CULL_FACE);
       } else {
@@ -109,7 +119,17 @@ int main(int argc, char* argv[]) {
 
       ptexMesh.Render(s_cam);
 
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      if (wireframe) {
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(1.0, 1.0);
+        ptexMesh.Render(s_cam);
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        // render wireframe on top
+        ptexMesh.RenderWireframe(s_cam);
+      } else {
+        ptexMesh.Render(s_cam);
+      }
+
       glDisable(GL_CULL_FACE);
 
       if (drawMirrors) {

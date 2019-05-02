@@ -6,12 +6,15 @@ layout(binding = 0) uniform sampler2D atlasTex;
 
 uniform float exposure;
 uniform float gamma;
+uniform float saturation;
 
 in vec2 uv;
 
 void main()
 {
     vec4 c = textureAtlas(atlasTex, gl_PrimitiveID, uv * tileSize);
-    c.rgb = pow(c.rgb * exposure, vec3(gamma));
-    FragColor = vec4(c.xyz, 1.0f);
+    c *= exposure;
+    applySaturation(c, saturation);
+    c.rgb = pow(c.rgb, vec3(gamma));
+    FragColor = vec4(c.rgb, 1.0f);
 }

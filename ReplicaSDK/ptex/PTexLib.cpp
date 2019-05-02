@@ -37,8 +37,9 @@ PTexMesh::PTexMesh(const std::string& meshFile, const std::string& atlasFolder) 
   LoadAtlasData(atlasFolder);
   if (isHdr) {
     // set defaults for HDR scene
-    exposure = 0.01f;
-    gamma = 2.2f;
+    exposure = 0.025f;
+    gamma = 1.6969f;
+    saturation = 1.5f;
   }
 
   // Load shader
@@ -69,6 +70,14 @@ void PTexMesh::SetGamma(const float& val) {
   gamma = val;
 }
 
+float PTexMesh::Saturation() const {
+  return saturation;
+}
+
+void PTexMesh::SetSaturation(const float& val) {
+  saturation = val;
+}
+
 void PTexMesh::RenderSubMesh(
     size_t subMesh,
     const pangolin::OpenGlRenderState& cam,
@@ -81,6 +90,7 @@ void PTexMesh::RenderSubMesh(
   shader.SetUniform("tileSize", (int)tileSize);
   shader.SetUniform("exposure", exposure);
   shader.SetUniform("gamma", 1.0f / gamma);
+  shader.SetUniform("saturation", saturation);
   shader.SetUniform("clipPlane", clipPlane(0), clipPlane(1), clipPlane(2), clipPlane(3));
 
   shader.SetUniform("widthInTiles", int(mesh.atlas.width / tileSize));
@@ -113,6 +123,57 @@ void PTexMesh::Render(const pangolin::OpenGlRenderState& cam, const Eigen::Vecto
   for (size_t i = 0; i < meshes.size(); i++) {
     RenderSubMesh(i, cam, clipPlane);
   }
+}
+
+void PTexMesh::RenderWireframe(
+        const pangolin::OpenGlRenderState& cam,
+        const Eigen::Vector4f& clipPlane) {
+  const bool doClip =
+      !(clipPlane(0) == 0.f && clipPlane(1) == 0.f && clipPlane(2) == 0.f && clipPlane(3) == 0.f);
+
+  GLdouble eqn[4] = {clipPlane(0), clipPlane(1), clipPlane(2), clipPlane(3)};
+
+  if (doClip) {
+    glClipPlane(GL_CLIP_PLANE0, eqn);
+    glEnable(GL_CLIP_PLANE0);
+  }
+
+  cam.Apply();
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+  glPushAttrib(GL_LINE_BIT);
+  glLineWidth(1.5f);
+
+  glColor4f(0.25f, 0.25f, 0.25f, 1.0f);
+
+  glPushAttrib(GL_POLYGON_BIT);
+  glFrontFace(GL_CCW);
+
+  for (size_t i = 0; i < meshes.size(); i++) {
+    meshes[i]->vbo.Bind();
+    glVertexPointer(meshes[i]->vbo.count_per_element, meshes[i]->vbo.datatype, 0, 0);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    meshes[i]->ibo.Bind();
+
+    glDrawElements(GL_QUADS, meshes[i]->ibo.num_elements, meshes[i]->ibo.datatype, 0);
+
+    meshes[i]->ibo.Unbind();
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    meshes[i]->vbo.Unbind();
+  }
+
+  glPopAttrib();
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  if (doClip) {
+    glDisable(GL_CLIP_PLANE0);
+  }
+
+  glPopAttrib();
 }
 
 std::vector<MeshData> PTexMesh::SplitMesh(const MeshData& mesh, const float splitSize) {

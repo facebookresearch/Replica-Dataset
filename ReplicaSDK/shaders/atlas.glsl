@@ -189,3 +189,16 @@ vec4 textureAtlas(sampler2D tex, int faceID, vec2 p, float lod = 0)
                    f.x),
                f.y);
 }
+
+void applySaturation(inout vec4 c, float saturation)
+{
+    float Pr = 0.299f;
+    float Pg = 0.587f;
+    float Pb = 0.114f;
+
+    const float P = sqrt(c.r * c.r * Pr + c.g * c.g * Pg + c.b * c.b * Pb);
+
+    c.r = P + (c.r - P) * saturation;
+    c.g = P + (c.g - P) * saturation;
+    c.b = P + (c.b - P) * saturation;
+}
