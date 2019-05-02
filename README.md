@@ -16,6 +16,41 @@ For machine learning purposes each dataset also contains an export to the format
 employed by [AI Habitat](https://www.aihabitat.org/) and is therefore usable
 seamlessly in that framework for AI agent training and other ML tasks.
 
+## Dataset Layout
+
+Each Replica contains the following assets:
+```
+├── glass.sur
+├── habitat
+    ├── mesh_semantic.ply 
+    ├── mesh_semantic.navmesh
+    ├── info_semantic.json
+    ├── mesh_preseg.ply 
+    ├── mesh_preseg.navmesh
+    └── info_preseg.json 
+├── mesh.ply
+├── preseg.bin
+├── preseg.json
+├── semantic.bin
+├── semantic.json
+└── texturesHdr
+    ├── 0-color-ptex.hdr
+    ├── 0-color-ptex.w
+    ├── 1-color-ptex.hdr
+    ├── 1-color-ptex.w
+    ├── ...
+    └── parameters.json
+```
+The different files contain the following:
+- `glass.sur`: parameterization of glass and mirror surfaces.
+- `mesh.ply`: the quad mesh of the scene with vertex colors.
+- `preseg.json` and `preseg.bin`: the presegmentation in terms of planes and non-planes of the scene.
+- `semantic.json` and `semantic.bin`: the semantic segmentation of the scene.
+- `texturesHdr`: the high resolution and high dynamic range textures of the scene.
+- `habitat/mesh_*ply`: the quad meshes including semantic or presegmentation information for AI Habitat. 
+- `habitat/info_*.json`: mapping from instance IDs in the respective `mesh_*.ply` to semantic names.
+- `habitat/mesh_*.navmesh`: navigation grid for AI Habitat.
+
 ## Replica SDK
 
 ### Setup
