@@ -25,15 +25,15 @@ Each Replica contains the following assets:
     ├── mesh_semantic.ply 
     ├── mesh_semantic.navmesh
     ├── info_semantic.json
-    ├── mesh_preseg.ply 
-    ├── mesh_preseg.navmesh
-    └── info_preseg.json 
+    ├── mesh_preseg_semantic.ply 
+    ├── mesh_preseg_semantic.navmesh
+    └── info_preseg_semantic.json 
 ├── mesh.ply
 ├── preseg.bin
 ├── preseg.json
 ├── semantic.bin
 ├── semantic.json
-└── texturesHdr
+└── textures
     ├── 0-color-ptex.hdr
     ├── 0-color-ptex.w
     ├── 1-color-ptex.hdr
@@ -46,10 +46,10 @@ The different files contain the following:
 - `mesh.ply`: the quad mesh of the scene with vertex colors.
 - `preseg.json` and `preseg.bin`: the presegmentation in terms of planes and non-planes of the scene.
 - `semantic.json` and `semantic.bin`: the semantic segmentation of the scene.
-- `texturesHdr`: the high resolution and high dynamic range textures of the scene.
-- `habitat/mesh_*ply`: the quad meshes including semantic or presegmentation information for AI Habitat. 
-- `habitat/info_*.json`: mapping from instance IDs in the respective `mesh_*.ply` to semantic names.
-- `habitat/mesh_*.navmesh`: navigation grid for AI Habitat.
+- `textures`: the high resolution and high dynamic range textures of the scene.
+- `habitat/mesh*semantic.ply`: the quad meshes including semantic or presegmentation information for AI Habitat. 
+- `habitat/info*semantic.json`: mapping from instance IDs in the respective `mesh_*.ply` to semantic names.
+- `habitat/mesh*semantic.navmesh`: navigation grid for AI Habitat.
 
 ## Replica SDK
 
