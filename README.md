@@ -85,6 +85,14 @@ headless on a server if so desired.
 ./build/bin/ReplicaRenderer mesh.ply /path/to/atlases [mirrorFile]
 ```
 
+## Replica and AI Habitat
+
+To use Replica within AI Habitat checkout the AI Habitat Sim at https://github.com/facebookresearch/habitat-sim
+After building the project you can launch the test viewer to verify that everything works:
+```
+./build/viewer /PATH/TO/REPLICA/apartment_0/habitat/mesh_semantic.ply
+```
+
 ## Team 
 
 - Julian Straub
