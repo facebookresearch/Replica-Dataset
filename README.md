@@ -95,34 +95,7 @@ After building the project you can launch the test viewer to verify that everyth
 
 ## Team 
 
-- Julian Straub
-- Thomas Wheelan
-- Lingni Ma
-- Steven Chen
-- Simon Green
-- Erik Wijman
-- Brian Budge
-- Christopher Dotson
-- Shobhit Verma
-- Anton Clarkson
-- Luis Pesqueira
-- Matthew Banks
-- Yuyang Zou
-- Mingfei Yan
-- Richard Newcombe
-
-## Citing the Replica Dataset
-
-We describe the dataset in the following whitepaper that can be found on arxiv 
-
-```
-@article{replica2019arxiv,
-  title =   {Replica},
-  author =  {}'
-  journal = {arXiv preprint arXiv:},
-  year =    {2019}
-}
-```
+Julian Straub, Thomas Wheelan, Lingni Ma, Steven Chen, Simon Green, Erik Wijman, Brian Budge, Christopher Dotson, Shobhit Verma, Anton Clarkson, Luis Pesqueira, Matthew Banks, Yuyang Zou, Mingfei Yan, Richard Newcombe.
 
 ## Contact
 
