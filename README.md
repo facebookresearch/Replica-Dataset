@@ -105,7 +105,7 @@ Julian Straub, Thomas Wheelan, Lingni Ma, Steven Chen, Simon Green, Erik Wijman,
 
 We want to acknowledge the hard work of our operators in the field who scanned
 apartments and places. 
-We also want to acknowledge our collaborators Dhruv Bathra and Manolis Savva at FAIR who worked to allow the use
+We also want to acknowledge our collaborators Dhruv Batra and Manolis Savva at FAIR who worked to allow the use
 of Replica with AI Habitat. 
 Additionally beyond the immediate team, this dataset would not have been
 possible without various contributions from the surreal team at large. 
