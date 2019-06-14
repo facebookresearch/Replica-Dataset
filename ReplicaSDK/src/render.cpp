@@ -26,7 +26,8 @@ int main(int argc, char* argv[]) {
 
   egl.PrintInformation();
 
-  const GLenum frontFace = GL_CW;
+  //Don't draw backfaces
+  const GLenum frontFace = GL_CCW;
   glFrontFace(frontFace);
 
   // Setup a framebuffer
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
           (height - 1.0f) / 2.0f,
           0.1f,
           100.0f),
-      pangolin::ModelViewLookAtRDF(0, 0, 0, 0, 0, 1, 0, -1, 0));
+      pangolin::ModelViewLookAtRDF(0, 0, 4, 0, 0, 0, 0, 1, 0));
 
   // Start at some origin
   Eigen::Matrix4d T_camera_world = s_cam.GetModelViewMatrix();
@@ -53,7 +54,7 @@ int main(int argc, char* argv[]) {
   // And move to the left
   Eigen::Matrix4d T_new_old = Eigen::Matrix4d::Identity();
 
-  T_new_old.topRightCorner(3, 1) = Eigen::Vector3d(-0.005, 0, 0);
+  T_new_old.topRightCorner(3, 1) = Eigen::Vector3d(0.025, 0, 0);
 
   // load mirrors
   std::vector<MirrorSurface> mirrors;
@@ -84,29 +85,34 @@ int main(int argc, char* argv[]) {
 
     // Render
     frameBuffer.Bind();
-
     glPushAttrib(GL_VIEWPORT_BIT);
     glViewport(0, 0, width, height);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+    glEnable(GL_CULL_FACE);
+
     ptexMesh.Render(s_cam);
 
-    glPushAttrib(GL_ENABLE_BIT);
     glDisable(GL_CULL_FACE);
+
+    glPopAttrib(); //GL_VIEWPORT_BIT
+    frameBuffer.Unbind();
 
     for (size_t i = 0; i < mirrors.size(); i++) {
       MirrorSurface& mirror = mirrors[i];
       // capture reflections
       mirrorRenderer.CaptureReflection(mirror, ptexMesh, s_cam, frontFace);
 
+      frameBuffer.Bind();
+      glPushAttrib(GL_VIEWPORT_BIT);
+      glViewport(0, 0, width, height);
+
       // render mirror
       mirrorRenderer.Render(mirror, mirrorRenderer.GetMaskTexture(i), s_cam);
+
+      glPopAttrib(); //GL_VIEWPORT_BIT
+      frameBuffer.Unbind();
     }
-
-    glPopAttrib(); //GL_ENABLE_BIT
-    glPopAttrib(); //GL_VIEWPORT_BIT
-
-    frameBuffer.Unbind();
 
     // Download and save
     render.Download(image.ptr, GL_RGB, GL_UNSIGNED_BYTE);
@@ -128,3 +134,4 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
+
