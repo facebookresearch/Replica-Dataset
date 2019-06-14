@@ -9,7 +9,7 @@ fi
 
 for p in {a..q}
 do 
-  wget https://github.com/facebookresearch/Replica-Dataset/releases/download/v1/replica_v1_0.tar.gz.parta$p
+  wget https://github.com/facebookresearch/Replica-Dataset/releases/download/v1.0/replica_v1_0.tar.gz.parta$p
 done
 
 cat replica_v1_0.tar.gz.part?? | unpigz -p 32  | tar -xvC $1
