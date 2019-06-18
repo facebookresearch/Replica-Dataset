@@ -134,7 +134,10 @@ void PTexMesh::RenderSubMeshDepth(
   Mesh& mesh = *meshes[subMesh];
 
   glPushAttrib(GL_POLYGON_BIT);
-  glFrontFace(GL_CCW);
+  int currFrontFace;
+  glGetIntegerv(GL_FRONT_FACE, &currFrontFace);
+  //Drawing the faces has the opposite winding order to the GL_LINES_ADJACENCY
+  glFrontFace(currFrontFace == GL_CW ? GL_CCW : GL_CW);
 
   depthShader.Bind();
   depthShader.SetUniform("MVP", cam.GetProjectionModelViewMatrix());  

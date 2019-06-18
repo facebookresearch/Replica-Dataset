@@ -83,6 +83,7 @@ int main(int argc, char* argv[]) {
 
   pangolin::ManagedImage<Eigen::Matrix<uint8_t, 3, 1>> image(width, height);
   pangolin::ManagedImage<float> depthImage(width, height);
+  pangolin::ManagedImage<uint16_t> depthImageInt(width, height);
 
   // Render some frames
   const size_t numFrames = 100;
@@ -139,7 +140,11 @@ int main(int argc, char* argv[]) {
       glViewport(0, 0, width, height);
       glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+      glEnable(GL_CULL_FACE);
+
       ptexMesh.RenderDepth(s_cam, depthScale);
+
+      glDisable(GL_CULL_FACE);
 
       glPopAttrib(); //GL_VIEWPORT_BIT
       depthFrameBuffer.Unbind();
@@ -147,13 +152,14 @@ int main(int argc, char* argv[]) {
       depthTexture.Download(depthImage.ptr, GL_RED, GL_FLOAT);
 
       // convert to 16-bit int
-      pangolin::ManagedImage<uint16_t> depthImageInt = pangolin::ImageConvert<uint16_t, float>(depthImage);
+      for(size_t i = 0; i < depthImage.Area(); i++)
+          depthImageInt[i] = static_cast<uint16_t>(depthImage[i] + 0.5f);
 
       snprintf(filename, 1000, "depth%06zu.png", i);
       pangolin::SaveImage(
           depthImageInt.UnsafeReinterpret<uint8_t>(),
           pangolin::PixelFormatFromString("GRAY16LE"),
-          std::string(filename));
+          std::string(filename), true, 34.0f);
     }
 
     // Move the camera
