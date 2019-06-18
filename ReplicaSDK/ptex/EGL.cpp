@@ -152,10 +152,13 @@ EGLCtx::EGLCtx(const bool createCtx, const int cudaDevice, const bool createSurf
 
     GLenum err = glewInit();
 
+#ifdef GLEW_ERROR_NO_GLX_DISPLAY
     if (err == GLEW_ERROR_NO_GLX_DISPLAY) {
         std::cout << "Can't initialize EGL GLEW GLX display, may crash!" << std::endl;
     }
-    else if (err != GLEW_OK) {
+    else 
+#endif
+    if (err != GLEW_OK) {
         ASSERT(false, "Can't initialize EGL, glewInit failing completely.");
     }
 
