@@ -88,7 +88,7 @@ git submodule update --init
 It requires the dependencies of
 [Pangolin](https://github.com/stevenlovegrove/Pangolin) and
 [Eigen](https://github.com/eigenteam/eigen-git-mirror)
-to be installed.
+to be installed. If you wish to use the headless renderer ensure you have the libegl1-mesa-dev package.
 
 ### ReplicaViewer
 
