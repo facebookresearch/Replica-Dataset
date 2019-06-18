@@ -51,6 +51,10 @@ PTexMesh::PTexMesh(const std::string& meshFile, const std::string& atlasFolder) 
   shader.AddShaderFromFile(pangolin::GlSlGeometryShader, shadir + "/mesh-ptex.geom", {}, {shadir});
   shader.AddShaderFromFile(pangolin::GlSlFragmentShader, shadir + "/mesh-ptex.frag", {}, {shadir});
   shader.Link();
+
+  depthShader.AddShaderFromFile(pangolin::GlSlVertexShader, shadir + "/mesh-depth.vert", {}, {shadir});
+  depthShader.AddShaderFromFile(pangolin::GlSlFragmentShader, shadir + "/mesh-depth.frag", {}, {shadir});
+  depthShader.Link();
 }
 
 PTexMesh::~PTexMesh() {}
@@ -120,9 +124,52 @@ void PTexMesh::RenderSubMesh(
   shader.Unbind();
 }
 
+// render depth
+void PTexMesh::RenderSubMeshDepth(
+    size_t subMesh,
+    const pangolin::OpenGlRenderState& cam,
+    const float depthScale,
+    const Eigen::Vector4f& clipPlane) {
+  ASSERT(subMesh < meshes.size());
+  Mesh& mesh = *meshes[subMesh];
+
+  glPushAttrib(GL_POLYGON_BIT);
+  int currFrontFace;
+  glGetIntegerv(GL_FRONT_FACE, &currFrontFace);
+  //Drawing the faces has the opposite winding order to the GL_LINES_ADJACENCY
+  glFrontFace(currFrontFace == GL_CW ? GL_CCW : GL_CW);
+
+  depthShader.Bind();
+  depthShader.SetUniform("MVP", cam.GetProjectionModelViewMatrix());  
+  depthShader.SetUniform("MV", cam.GetModelViewMatrix());
+  depthShader.SetUniform("clipPlane", clipPlane(0), clipPlane(1), clipPlane(2), clipPlane(3));
+  depthShader.SetUniform("scale", depthScale);
+
+  mesh.vbo.Bind();
+  glVertexAttribPointer(0, mesh.vbo.count_per_element, mesh.vbo.datatype, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
+  mesh.vbo.Unbind();
+
+  mesh.ibo.Bind();
+  glDrawElements(GL_QUADS, mesh.ibo.num_elements, mesh.ibo.datatype, 0);
+  mesh.ibo.Unbind();
+  glDisableVertexAttribArray(0);
+
+  depthShader.Unbind();
+
+  glPopAttrib();
+}
+
+
 void PTexMesh::Render(const pangolin::OpenGlRenderState& cam, const Eigen::Vector4f& clipPlane) {
   for (size_t i = 0; i < meshes.size(); i++) {
     RenderSubMesh(i, cam, clipPlane);
+  }
+}
+
+void PTexMesh::RenderDepth(const pangolin::OpenGlRenderState& cam, const float depthScale, const Eigen::Vector4f& clipPlane) {
+  for (size_t i = 0; i < meshes.size(); i++) {
+    RenderSubMeshDepth(i, cam, depthScale, clipPlane);
   }
 }
 
