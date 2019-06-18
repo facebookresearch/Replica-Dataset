@@ -48,7 +48,9 @@ class MirrorRenderer {
   void Render(
       const MirrorSurface& surface,
       pangolin::GlTexture& maskTexture,
-      const pangolin::OpenGlRenderState& cam) {
+      const pangolin::OpenGlRenderState& cam,
+      const bool drawDepth=false
+      ) {
     shader.Bind();
     shader.SetUniform("MVP_matrix", cam.GetProjectionModelViewMatrix());
     shader.SetUniform("MV_matrix", cam.GetModelViewMatrix());
@@ -61,8 +63,10 @@ class MirrorRenderer {
     glActiveTexture(GL_TEXTURE1);
     maskTexture.Bind();
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (!drawDepth) {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
 
     glDisable(GL_CULL_FACE);
 
@@ -90,7 +94,9 @@ class MirrorRenderer {
       const MirrorSurface& mirror,
       PTexMesh& ptexMesh,
       const pangolin::OpenGlRenderState& cam,
-      GLenum frontFace) {
+      GLenum frontFace,
+      const bool drawDepth=false,
+      const float depthScale=1.0f) {
     if (!InView(mirror, cam))
       return;
     // render reflections to texture
@@ -106,7 +112,10 @@ class MirrorRenderer {
     plane(3) -= surfaceOffset;
 
     BeginDrawScene(frontFace);
-    ptexMesh.Render(reflectCam, signFlip * plane);
+    if (drawDepth)
+      ptexMesh.RenderDepth(reflectCam, depthScale, signFlip * plane);
+    else
+      ptexMesh.Render(reflectCam, signFlip * plane);
     EndDrawScene(frontFace);
   }
 

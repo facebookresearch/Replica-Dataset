@@ -1,6 +1,7 @@
 // Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 #include <EGL.h>
 #include <PTexLib.h>
+#include <pangolin/image/image_convert.h>
 
 #include "MirrorRenderer.h"
 
@@ -20,6 +21,8 @@ int main(int argc, char* argv[]) {
 
   const int width = 1280;
   const int height = 960;
+  bool renderDepth = true;
+  float depthScale = 65535.0f * 0.1f;
 
   // Setup EGL
   EGLCtx egl;
@@ -34,6 +37,9 @@ int main(int argc, char* argv[]) {
   pangolin::GlTexture render(width, height);
   pangolin::GlRenderBuffer renderBuffer(width, height);
   pangolin::GlFramebuffer frameBuffer(render, renderBuffer);
+
+  pangolin::GlTexture depthTexture(width, height, GL_R32F, false, 0, GL_RED, GL_FLOAT, 0);
+  pangolin::GlFramebuffer depthFrameBuffer(depthTexture, renderBuffer);
 
   // Setup a camera
   pangolin::OpenGlRenderState s_cam(
@@ -76,6 +82,7 @@ int main(int argc, char* argv[]) {
   PTexMesh ptexMesh(meshFile, atlasFolder);
 
   pangolin::ManagedImage<Eigen::Matrix<uint8_t, 3, 1>> image(width, height);
+  pangolin::ManagedImage<float> depthImage(width, height);
 
   // Render some frames
   const size_t numFrames = 100;
@@ -124,6 +131,30 @@ int main(int argc, char* argv[]) {
         image.UnsafeReinterpret<uint8_t>(),
         pangolin::PixelFormatFromString("RGB24"),
         std::string(filename));
+
+    if (renderDepth) {
+      // render depth
+      depthFrameBuffer.Bind();
+      glPushAttrib(GL_VIEWPORT_BIT);
+      glViewport(0, 0, width, height);
+      glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+      ptexMesh.RenderDepth(s_cam, depthScale);
+
+      glPopAttrib(); //GL_VIEWPORT_BIT
+      depthFrameBuffer.Unbind();
+
+      depthTexture.Download(depthImage.ptr, GL_RED, GL_FLOAT);
+
+      // convert to 16-bit int
+      pangolin::ManagedImage<uint16_t> depthImageInt = pangolin::ImageConvert<uint16_t, float>(depthImage);
+
+      snprintf(filename, 1000, "depth%06zu.png", i);
+      pangolin::SaveImage(
+          depthImageInt.UnsafeReinterpret<uint8_t>(),
+          pangolin::PixelFormatFromString("GRAY16LE"),
+          std::string(filename));
+    }
 
     // Move the camera
     T_camera_world = T_camera_world * T_new_old.inverse();

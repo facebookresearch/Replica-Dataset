@@ -38,6 +38,7 @@ int main(int argc, char* argv[]) {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   const GLenum frontFace = GL_CW;
   glFrontFace(frontFace);
+  glLineWidth(1.0f);
 
   // Tell the base view to arrange its children equally
   if (uiWidth != 0) {
@@ -89,10 +90,12 @@ int main(int argc, char* argv[]) {
   pangolin::Var<float> exposure("ui.Exposure", 0.01, 0.0f, 0.1f);
   pangolin::Var<float> gamma("ui.Gamma", ptexMesh.Gamma(), 1.0f, 3.0f);
   pangolin::Var<float> saturation("ui.Saturation", ptexMesh.Saturation(), 0.0f, 2.0f);
+  pangolin::Var<float> depthScale("ui.Depth_scale", 0.1f, 0.0f, 1.0f);
 
   pangolin::Var<bool> wireframe("ui.Wireframe", false, true);
   pangolin::Var<bool> drawBackfaces("ui.Draw_backfaces", false, true);
   pangolin::Var<bool> drawMirrors("ui.Draw_mirrors", true, true);
+  pangolin::Var<bool> drawDepth("ui.Draw_depth", false, true);
 
   ptexMesh.SetExposure(exposure);
 
@@ -120,8 +123,6 @@ int main(int argc, char* argv[]) {
         glEnable(GL_CULL_FACE);
       }
 
-      ptexMesh.Render(s_cam);
-
       if (wireframe) {
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonOffset(1.0, 1.0);
@@ -129,6 +130,8 @@ int main(int argc, char* argv[]) {
         glDisable(GL_POLYGON_OFFSET_FILL);
         // render wireframe on top
         ptexMesh.RenderWireframe(s_cam);
+      } else if (drawDepth) {
+        ptexMesh.RenderDepth(s_cam, depthScale);
       } else {
         ptexMesh.Render(s_cam);
       }
@@ -139,10 +142,10 @@ int main(int argc, char* argv[]) {
         for (size_t i = 0; i < mirrors.size(); i++) {
           MirrorSurface& mirror = mirrors[i];
           // capture reflections
-          mirrorRenderer.CaptureReflection(mirror, ptexMesh, s_cam, frontFace);
+          mirrorRenderer.CaptureReflection(mirror, ptexMesh, s_cam, frontFace, drawDepth, depthScale);
 
           // render mirror
-          mirrorRenderer.Render(mirror, mirrorRenderer.GetMaskTexture(i), s_cam);
+          mirrorRenderer.Render(mirror, mirrorRenderer.GetMaskTexture(i), s_cam, drawDepth);
         }
       }
     }

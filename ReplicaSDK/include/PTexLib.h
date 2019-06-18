@@ -23,6 +23,12 @@ class PTexMesh {
       const pangolin::OpenGlRenderState& cam,
       const Eigen::Vector4f& clipPlane);
 
+  void RenderSubMeshDepth(
+      size_t subMesh,
+      const pangolin::OpenGlRenderState& cam,
+      const float depthScale,
+      const Eigen::Vector4f& clipPlane);
+
   void Render(
       const pangolin::OpenGlRenderState& cam,
       const Eigen::Vector4f& clipPlane = Eigen::Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -30,6 +36,11 @@ class PTexMesh {
   void RenderWireframe(
       const pangolin::OpenGlRenderState& cam,
       const Eigen::Vector4f& clipPlane = Eigen::Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+  void RenderDepth(
+    const pangolin::OpenGlRenderState& cam,
+    const float depthScale=1.0f,
+    const Eigen::Vector4f& clipPlane = Eigen::Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
 
   float Exposure() const;
   void SetExposure(const float& val);
@@ -62,6 +73,7 @@ class PTexMesh {
   uint32_t tileSize = 0;
 
   pangolin::GlSlProgram shader;
+  pangolin::GlSlProgram depthShader;
 
   float exposure = 1.0f;
   float gamma = 1.0f;
