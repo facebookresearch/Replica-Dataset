@@ -80,7 +80,8 @@ The different files contain the following:
 ## Replica SDK
 
 ### Setup
-The Replica SDK can be compiled using the build script via
+After installing the dependencies of [Pangolin](https://github.com/stevenlovegrove/Pangolin),
+the Replica SDK can be compiled using the build script via
 ```
 git submodule update --init
 ./build.sh
