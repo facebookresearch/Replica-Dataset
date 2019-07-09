@@ -32,11 +32,6 @@ If you use the Replica dataset in your research, please cite the following
 
 ## Replica Dataset
 
-To download and decompress the dataset use the `download.sh` script:
-```
-./download.sh /path/to/replica_v1
-```
-
 The following 18 scenes are included in this initial release:
 
 ![Replica Dataset](./assets/ReplicaDataset.png)
@@ -76,6 +71,22 @@ The different files contain the following:
 - `habitat/info*semantic.json`: mapping from instance IDs in the respective `mesh_*.ply` to semantic names.
 - `habitat/mesh*semantic.navmesh`: navigation grid for AI Habitat.
 
+### Download on Mac OS and Linux
+Make sure `pigz` and `wget` are installed:
+```
+# on Mac OS
+brew install wget pigz
+# on Ubuntu
+sudo apt-get install pigz
+```
+To download and decompress the dataset use the `download.sh` script:
+```
+./download.sh /path/to/replica_v1
+```
+
+### Download on Windows
+
+Execute `win_download.bat` to download Replica.
 
 ## Replica SDK
 
