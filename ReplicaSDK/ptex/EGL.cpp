@@ -105,7 +105,7 @@ EGLCtx::EGLCtx(const bool createCtx, const int cudaDevice, const bool createSurf
             eglGetProcAddress("eglQueryDeviceAttribEXT"));
 
     int eglDevId = 0;
-
+    bool foundCudaDev = false;
     // Find the CUDA device asked for
     for (; eglDevId < numDevices; ++eglDevId) {
       EGLAttrib cudaDevNumber;
@@ -121,10 +121,14 @@ EGLCtx::EGLCtx(const bool createCtx, const int cudaDevice, const bool createSurf
 
     PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
         (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
-
-    display = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[eglDevId], 0);
+    if(foundCudaDev) {
+      display = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[eglDevId], 0);
+    } else {
+      Display* x11 = XOpenDisplay(NULL);
+      display = eglGetPlatformDisplayEXT(EGL_PLATFORM_X11_KHR, x11, 0);
+    }
     ASSERT(display != EGL_NO_DISPLAY, "Can't create EGL display");
-
+    
     EGLint major, minor;
     ASSERT(eglInitialize(display, &major, &minor), "Can't init EGL");
 
