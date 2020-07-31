@@ -4,9 +4,11 @@
 #include <pangolin/display/display.h>
 #include <pangolin/display/widgets/widgets.h>
 
+#include "GLCheck.h"
 #include "MirrorRenderer.h"
 
 int main(int argc, char* argv[]) {
+
   ASSERT(argc == 3 || argc == 4, "Usage: ./ReplicaViewer mesh.ply textures [glass.sur]");
 
   const std::string meshFile(argv[1]);
@@ -29,6 +31,10 @@ int main(int argc, char* argv[]) {
 
   if (glewInit() != GLEW_OK) {
     pango_print_error("Unable to initialize GLEW.");
+  }
+
+  if(!checkGLVersion()) {
+    return 1;
   }
 
   // Setup default OpenGL parameters
