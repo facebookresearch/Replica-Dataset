@@ -161,32 +161,29 @@ int indexAdjacentFaces(int faceID, inout ivec2 p, int tsize)
 }
 
 // load texel from atlas, handling adjacent faces
-vec4 texelFetchAtlasAdj(sampler2D tex, int faceID, ivec2 p, int level = 0)
+vec4 texelFetchAtlasAdj(sampler2D tex, int faceID, ivec2 p)
 {
-    int tsize = tileSize >> level;
-
     // fetch from adjacent face if necessary
-    faceID = indexAdjacentFaces(faceID, p, tsize);
+    faceID = indexAdjacentFaces(faceID, p, tileSize);
 
     // clamp to tile edge
-    p = clamp(p, ivec2(0, 0), ivec2(tsize - 1, tsize - 1));
+    p = clamp(p, ivec2(0, 0), ivec2(tileSize - 1, tileSize - 1));
 
-    ivec2 atlasPos = FaceToAtlasPos(faceID, tsize);
-    return texelFetch(tex, atlasPos + p, level);
+    ivec2 atlasPos = FaceToAtlasPos(faceID, tileSize);
+    return texelFetch(tex, atlasPos + p, 0);
 }
 
 // fetch with bilinear filtering
-vec4 textureAtlas(sampler2D tex, int faceID, vec2 p, float lod = 0)
+vec4 textureAtlas(sampler2D tex, int faceID, vec2 p)
 {
-    int level = int(lod);
     p -= 0.5;
     ivec2 i = ivec2(floor(p));
     vec2 f = p - vec2(i);
-    return mix(mix(texelFetchAtlasAdj(tex, faceID, ivec2(i), level),
-                   texelFetchAtlasAdj(tex, faceID, ivec2(i.x + 1, i.y), level),
+    return mix(mix(texelFetchAtlasAdj(tex, faceID, ivec2(i)),
+                   texelFetchAtlasAdj(tex, faceID, ivec2(i.x + 1, i.y)),
                    f.x),
-               mix(texelFetchAtlasAdj(tex, faceID, ivec2(i.x, i.y + 1), level),
-                   texelFetchAtlasAdj(tex, faceID, ivec2(i.x + 1, i.y + 1), level),
+               mix(texelFetchAtlasAdj(tex, faceID, ivec2(i.x, i.y + 1)),
+                   texelFetchAtlasAdj(tex, faceID, ivec2(i.x + 1, i.y + 1)),
                    f.x),
                f.y);
 }

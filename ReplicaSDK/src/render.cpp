@@ -3,7 +3,9 @@
 #include <PTexLib.h>
 #include <pangolin/image/image_convert.h>
 
+#include "GLCheck.h"
 #include "MirrorRenderer.h"
+
 
 int main(int argc, char* argv[]) {
   ASSERT(argc == 3 || argc == 4, "Usage: ./ReplicaRenderer mesh.ply /path/to/atlases [mirrorFile]");
@@ -28,6 +30,10 @@ int main(int argc, char* argv[]) {
   EGLCtx egl;
 
   egl.PrintInformation();
+  
+  if(!checkGLVersion()) {
+    return 1;
+  }
 
   //Don't draw backfaces
   const GLenum frontFace = GL_CCW;
