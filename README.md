@@ -47,7 +47,9 @@ Each Replica contains the following assets:
     ├── info_semantic.json
     ├── mesh_preseg_semantic.ply 
     ├── mesh_preseg_semantic.navmesh
-    └── info_preseg_semantic.json 
+    ├── info_preseg_semantic.json
+    ├── replica_stage.stage_config.json
+    └── sorted_faces.bin 
 ├── mesh.ply
 ├── preseg.bin
 ├── preseg.json
@@ -70,14 +72,16 @@ The different files contain the following:
 - `habitat/mesh*semantic.ply`: the quad meshes including semantic or presegmentation information for AI Habitat. 
 - `habitat/info*semantic.json`: mapping from instance IDs in the respective `mesh_*.ply` to semantic names.
 - `habitat/mesh*semantic.navmesh`: navigation grid for AI Habitat.
+- `habitat/replica_stage.stage_config.json`: configuration file defining scene level parameters for habitat-sim.
+- `sorted_faces.bin`: binary file containing pre-processed geometry data for habitat-sim Ptex rendering support.
 
 ### Download on Mac OS and Linux
-Make sure `pigz` and `wget` are installed:
+Make sure `pigz`, `wget`, and `unzip` are installed:
 ```
 # on Mac OS
-brew install wget pigz
+brew install wget pigz unzip
 # on Ubuntu
-sudo apt-get install pigz
+sudo apt-get install pigz unzip
 ```
 To download and decompress the dataset use the `download.sh` script:
 ```
@@ -130,7 +134,7 @@ headless on a server if so desired.
 To use Replica within AI Habitat checkout the AI Habitat Sim at [https://github.com/facebookresearch/habitat-sim](https://github.com/facebookresearch/habitat-sim).
 After building the project you can launch the test viewer to verify that everything works:
 ```
-./build/viewer /PATH/TO/REPLICA/apartment_0/habitat/mesh_semantic.ply
+./build/viewer --dataset /PATH/TO/REPLICA/replica.scene_dataset_config.json -- frl_apartment_0
 ```
 
 ## Team 

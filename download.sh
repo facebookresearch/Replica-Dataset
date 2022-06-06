@@ -20,3 +20,6 @@ done
 mkdir -p $1
 
 cat replica_v1_0.tar.gz.part?? | unpigz -p 32  | tar -xvC $1
+
+#unzip and merge the additional habitat configs
+unzip -qn assets/additional_habitat_configs.zip -d $1
