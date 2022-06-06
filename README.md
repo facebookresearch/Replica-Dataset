@@ -81,7 +81,7 @@ Make sure `pigz`, `wget`, and `unzip` are installed:
 # on Mac OS
 brew install wget pigz unzip
 # on Ubuntu
-sudo apt-get install pigz unzip
+sudo apt-get install wget pigz unzip
 ```
 To download and decompress the dataset use the `download.sh` script:
 ```
