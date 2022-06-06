@@ -73,7 +73,7 @@ The different files contain the following:
 - `habitat/info*semantic.json`: mapping from instance IDs in the respective `mesh_*.ply` to semantic names.
 - `habitat/mesh*semantic.navmesh`: navigation grid for AI Habitat.
 - `habitat/replica_stage.stage_config.json`: configuration file defining scene level parameters for habitat-sim.
-- `sorted_faces.bin`: binary file containing pre-processed geometry data for habitat-sim Ptex rendering support.
+- `habitat/sorted_faces.bin`: binary file containing pre-processed geometry data for habitat-sim Ptex rendering support.
 
 ### Download on Mac OS and Linux
 Make sure `pigz`, `wget`, and `unzip` are installed:
