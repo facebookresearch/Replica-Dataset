@@ -19,7 +19,7 @@ seamlessly in that framework for AI agent training and other ML tasks.
 
 ## Citing the Replica Dataset
 
-If you use the Replica dataset in your research, please cite the following
+If you use the Replica dataset in your research directly or indirectly via derivative datasets or frameworks, please cite the following
 [technical report](https://arxiv.org/abs/1906.05797):
 ```
 @article{replica19arxiv,
