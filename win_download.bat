@@ -1,5 +1,5 @@
 @echo off
-set TARGET=c:\\replica
+set TARGET=d:\\replica
 
 if NOT EXIST %TARGET% (
     mkdir %TARGET%
