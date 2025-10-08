@@ -1,5 +1,5 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 3.22)
 
 project(ReplicaSDK)
 
@@ -10,7 +10,7 @@ set(PTEX_SHADER_DIR "${CMAKE_CURRENT_LIST_DIR}/shaders" CACHE PATH "Where the sh
 file(GLOB srcs_ptex ptex/*.cpp)
 file(GLOB hdrs include/*.h)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -msse2 -msse3 -Wall -std=c++11 -fopenmp -DSHADER_DIR=${PTEX_SHADER_DIR}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -msse2 -msse3 -Wall -fopenmp -DSHADER_DIR=${PTEX_SHADER_DIR}")
 
 add_library(ptex SHARED
             ${srcs_ptex}
@@ -18,20 +18,21 @@ add_library(ptex SHARED
 )
 
 target_link_libraries(ptex
-                      ${Eigen_LIBRARIES}
+                      Eigen3::Eigen
                       ${Pangolin_LIBRARIES}
                       ${dl_LIBRARIES}
                       stdc++fs
+                      X11
 )
 target_include_directories(ptex PUBLIC
             ${Pangolin_INCLUDE_DIRS}
-            ${Eigen_INCLUDE_DIRS}
             ${dl_INCLUDE_DIRS}
             ${CMAKE_CURRENT_LIST_DIR}
 )
 
+set_property(TARGET ptex PROPERTY CXX_STANDARD 17)
+
 include_directories(${Pangolin_INCLUDE_DIRS})
-include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${dl_INCLUDE_DIRS})
 include_directories("./include")
 
@@ -56,3 +57,5 @@ target_link_libraries(ReplicaRenderer
                       ptex
                       stdc++fs
 )
+
+install(TARGETS ptex ReplicaViewer ReplicaRenderer)

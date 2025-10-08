@@ -2,7 +2,7 @@
 #include <PTexLib.h>
 
 #include <pangolin/display/display.h>
-#include <pangolin/display/widgets/widgets.h>
+#include <pangolin/display/widgets.h>
 
 #include "GLCheck.h"
 #include "MirrorRenderer.h"
@@ -29,9 +29,11 @@ int main(int argc, char* argv[]) {
   // Setup OpenGL Display (based on GLUT)
   pangolin::CreateWindowAndBind("ReplicaViewer", uiWidth + width, height);
 
+#ifdef HAVE_GLEW
   if (glewInit() != GLEW_OK) {
     pango_print_error("Unable to initialize GLEW.");
   }
+#endif
 
   if(!checkGLVersion()) {
     return 1;

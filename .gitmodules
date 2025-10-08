@@ -1,6 +1,6 @@
 [submodule "3rdparty/eigen-git-mirror"]
 	path = 3rdparty/eigen
-	url = https://github.com/eigenteam/eigen-git-mirror.git
+	url = https://gitlab.com/libeigen/eigen.git
 [submodule "3rdparty/Pangolin"]
 	path = 3rdparty/Pangolin
 	url = https://github.com/stevenlovegrove/Pangolin.git

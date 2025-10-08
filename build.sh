@@ -2,13 +2,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 
 cd 3rdparty/Pangolin
-mkdir build
-cd build
-cmake ..
-make -j
+cmake -B build
+cmake --build build -j
 
-cd ../../../
-mkdir build
-cd build
-cmake ..
-make -j
+cd ../../
+cmake -B build
+cmake --build build -j

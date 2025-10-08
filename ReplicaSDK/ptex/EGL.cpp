@@ -130,7 +130,7 @@ EGLCtx::EGLCtx(const bool createCtx, const int cudaDevice, const bool createSurf
       display = eglGetPlatformDisplayEXT(EGL_PLATFORM_X11_KHR, x11, 0);
     }
     ASSERT(display != EGL_NO_DISPLAY, "Can't create EGL display");
-    
+
     EGLint major, minor;
     ASSERT(eglInitialize(display, &major, &minor), "Can't init EGL");
 
@@ -156,17 +156,19 @@ EGLCtx::EGLCtx(const bool createCtx, const int cudaDevice, const bool createSurf
           "Can't bind EGL context");
     }
 
+#ifdef HAVE_GLEW
     GLenum err = glewInit();
 
 #ifdef GLEW_ERROR_NO_GLX_DISPLAY
     if (err == GLEW_ERROR_NO_GLX_DISPLAY) {
         std::cout << "Can't initialize EGL GLEW GLX display, may crash!" << std::endl;
     }
-    else 
+    else
 #endif
     if (err != GLEW_OK) {
         ASSERT(false, "Can't initialize EGL, glewInit failing completely.");
     }
+#endif
 
     // Setup default OpenGL parameters
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);

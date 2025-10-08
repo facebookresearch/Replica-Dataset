@@ -1,5 +1,5 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 3.22)
 
 project(Replica)
 
@@ -14,12 +14,11 @@ if(NOT ${Eigen3_FOUND})
 endif()
 
 # use system Pangolin if available
-find_package(Pangolin)
+find_package(Pangolin 0.9)
 if(NOT ${Pangolin_FOUND})
     message(STATUS "Using 3rd party Pangolin")
-    set(Pangolin_INCLUDE_DIRS "${THIRD_PARTY}/Pangolin/build/src/include")
-    list(APPEND Pangolin_INCLUDE_DIRS "${THIRD_PARTY}/Pangolin/include")
-    set(Pangolin_LIBRARIES "${THIRD_PARTY}/Pangolin/build/src/libpangolin.so")
+    list(APPEND CMAKE_PREFIX_PATH "${THIRD_PARTY}/Pangolin/build")
+    find_package(Pangolin 0.9 REQUIRED)
 endif()
 
 find_package(dl REQUIRED)
