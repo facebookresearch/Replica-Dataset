@@ -3,13 +3,14 @@ import os
 import math
 import random
 from mathutils import Vector
+from datetime import datetime
 
 # ==========================================
 # 1. USER CONFIGURATION
 # ==========================================
-ply_path = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-data\apartment_0\mesh.ply"
+ply_path = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-data\room_0\mesh.ply"
 output_dir = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-output"
-num_renders = 3 # How many random viewpoints do you want to generate?
+num_renders = 10 # How many random viewpoints do you want to generate?
 
 os.makedirs(output_dir, exist_ok=True)
 
@@ -72,15 +73,27 @@ for device in prefs.devices:
 scene.cycles.device = 'GPU'
 scene.cycles.samples = 128  
 
+# Disable all light bounces to stop the emission shader from illuminating the room
+scene.cycles.max_bounces = 0
+scene.cycles.diffuse_bounces = 0
+scene.cycles.glossy_bounces = 0
+scene.cycles.transmission_bounces = 0
+scene.cycles.volume_bounces = 0
+scene.cycles.transparent_max_bounces = 0
+
 # Set 4K Resolution
-scene.render.resolution_x = 4096
-scene.render.resolution_y = 2048
+scene.render.resolution_x = 8192
+scene.render.resolution_y = 4096
 scene.render.resolution_percentage = 100
 
 # Setup 5.1 Node Tree for Depth
 scene.view_layers["ViewLayer"].use_pass_z = True
 scene.render.image_settings.file_format = 'PNG'
 scene.render.image_settings.color_depth = '8'
+
+# Prevent Blender from double-tonemapping the pre-baked vertex colors
+scene.view_settings.view_transform = 'Standard'
+scene.view_settings.look = 'None'
 
 tree = bpy.data.node_groups.new("ReplicaComp", "CompositorNodeTree")
 scene.compositing_node_group = tree
@@ -137,6 +150,9 @@ for _ in range(num_renders):
 # ==========================================
 # 5. EXECUTE BATCH RENDER
 # ==========================================
+# ADDED: Generate a single timestamp for the entire batch
+session_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
 for i, loc in enumerate(valid_locations):
     print(f"\n--- Rendering View {i+1} of {len(valid_locations)} ---")
     print(f"Camera Coordinates: X={loc.x:.2f}, Y={loc.y:.2f}, Z={loc.z:.2f}")
@@ -145,9 +161,9 @@ for i, loc in enumerate(valid_locations):
     # Randomly rotate the camera horizontally for variety
     cam_obj.rotation_euler = (math.radians(90), 0.0, random.uniform(0, math.pi * 2))
     
-    # Set dynamic filenames
-    scene.render.filepath = os.path.join(output_dir, f"rgb_4k_view_{i:03d}")
-    file_output_depth.file_name = f"depth_4k_view_{i:03d}_"
+    # MODIFIED: Insert timestamp into both filenames
+    scene.render.filepath = os.path.join(output_dir, f"rgb_4k_{session_timestamp}_view_{i:03d}")
+    file_output_depth.file_name = f"depth_4k_{session_timestamp}_view_{i:03d}_"
     
     bpy.ops.render.render(write_still=True) 
 
