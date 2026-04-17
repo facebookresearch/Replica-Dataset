@@ -9,7 +9,7 @@ from datetime import datetime
 # 1. USER CONFIGURATION
 # ==========================================
 ply_path = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-data\room_0\mesh.ply"
-output_dir = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-output"
+output_dir = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-output-v5"
 num_renders = 10 # How many random viewpoints do you want to generate?
 
 os.makedirs(output_dir, exist_ok=True)
@@ -82,8 +82,8 @@ scene.cycles.volume_bounces = 0
 scene.cycles.transparent_max_bounces = 0
 
 # Set 4K Resolution
-scene.render.resolution_x = 8192
-scene.render.resolution_y = 4096
+scene.render.resolution_x = 4098
+scene.render.resolution_y = 2048
 scene.render.resolution_percentage = 100
 
 # Setup 5.1 Node Tree for Depth
