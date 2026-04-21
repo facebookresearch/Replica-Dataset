@@ -82,7 +82,7 @@ scene.cycles.volume_bounces = 0
 scene.cycles.transparent_max_bounces = 0
 
 # Set 4K Resolution
-scene.render.resolution_x = 4098
+scene.render.resolution_x = 4096
 scene.render.resolution_y = 2048
 scene.render.resolution_percentage = 100
 
