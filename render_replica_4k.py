@@ -8,9 +8,9 @@ from datetime import datetime
 # ==========================================
 # 1. USER CONFIGURATION
 # ==========================================
-ply_path = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-data\room_0\mesh.ply"
-output_dir = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-output-v5"
-num_renders = 10 # How many random viewpoints do you want to generate?
+ply_path = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-data\room_2\mesh.ply"
+output_dir = r"C:\Users\fkuli\OneDrive\Pulpit\Replica-Dataset\replica-output-v7"
+num_renders = 20 # How many random viewpoints do you want to generate?
 
 os.makedirs(output_dir, exist_ok=True)
 
